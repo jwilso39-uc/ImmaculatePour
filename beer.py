@@ -1,11 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
-"""
-Docstring for beer
 
-Functions for looking up beer on Untappd (using scraping tools) given search term
-"""
 class Beer:
+    """
+    Represents a single beer.
+    """
     def __init__(self, soup: BeautifulSoup) -> None:
         #grab id from href tag
         id_tag = soup.find('a', class_='label')
@@ -53,14 +52,21 @@ class Beer:
         return soup.find('div', class_='results-container').find('div', class_='beer-item')
 
 class Brewery:
+    """
+    Represents a brewery
+    """
     def __init__(self, soup: BeautifulSoup) -> None:
         self.name = soup.find('div', class_='name').h1.text.strip()
+
         loc = soup.find('p', class_='brewery').text.strip().split(",")
         self.city = loc[0]
         self.state = loc[1].split()[0]
+
         self.style = soup.find('p', class_='style').text
+
         ratings_str = soup.find('p', class_='raters').text.strip().split()[0]
         self.ratings = int(ratings_str.replace(",",""))
+
         self.site = soup.find('a', class_='url tip')['href']
 
 
