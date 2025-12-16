@@ -12,6 +12,7 @@ class Grid:
     """
     def __init__(self) -> None:
         self.size = 3
+        self.lives = self.size ** 2
         self.grid = [[None for _ in range(self.size)] for _ in range(self.size)]
         self.cols = []
         exclude = set()
@@ -41,3 +42,13 @@ class Grid:
     """
     def add_beer(self, x: int, y: int, beer: Beer) -> None:
         self.grid[y][x] = beer
+
+    """
+    Removes a guess from the grid and returns True if user is out of guesses
+    """
+    def remove_life(self) -> bool:
+        self.lives -= 1
+        if self.lives == 0:
+            return True
+        else:
+            return False
