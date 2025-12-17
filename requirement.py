@@ -39,18 +39,23 @@ class Requirement:
         ,('region', 'west_coast'): 'West Coast'
     }
 
-    def __init__(self, exclude = None, dups = None) -> None:
-        if exclude is None:
-            exclude = set()
-        if dups is None:
-            dups = set()
-        available = set(self.types.keys()) - exclude
-        self.type = random.choice(list(available))
-        self.req = random.choice(self.types[self.type])
-        while (self.type, self.req) in dups:
+    def __init__(self, exclude = None, dups = None, session = None) -> None:
+        if session is None:
+            if exclude is None:
+                exclude = set()
+            if dups is None:
+                dups = set()
+            available = set(self.types.keys()) - exclude
             self.type = random.choice(list(available))
             self.req = random.choice(self.types[self.type])
-        self.text = self.texts[(self.type, self.req)]
+            while (self.type, self.req) in dups:
+                self.type = random.choice(list(available))
+                self.req = random.choice(self.types[self.type])
+            self.text = self.texts[(self.type, self.req)]
+        else:
+            self.type = session['type']
+            self.req = session['req']
+            self.text = session['text']
 
     def get_excluded_set(self):
         if self.type in ['dom_intl', 'region']:
@@ -132,3 +137,10 @@ class Requirement:
                         return False
             case _:
                 return False
+            
+    def serialize(self) -> dict:
+        return {
+            'type': self.type
+            ,'req': self.req
+            ,'text': self.text
+        }

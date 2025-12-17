@@ -55,11 +55,13 @@
     </table>
 
 <dialog id="dialog">
-  <form method="dialog">
+  <form method="POST", action="">
+    <input type="hidden" name="row" id="modal-row">
+    <input type="hidden" name="col" id="modal-col">
     <p>
       <label>
         Enter Beer:
-        <input type="text" required />
+        <input type="text" name="beer_name" required />
       </label>
     </p>
     <div>

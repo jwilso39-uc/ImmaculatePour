@@ -9,11 +9,14 @@ showBtn.forEach((btn) => {
   btn.addEventListener("click", () => {
     activeRow = btn.getAttribute('data-row');
     activeCol = btn.getAttribute('data-col');
+
+    document.getElementById('modal-row').value = activeRow;
+    document.getElementById('modal-col').value = activeCol;
+
     dialog.showModal();
   });
 });
 
 jsCloseBtn.addEventListener("click", (e) => {
-  e.preventDefault();
   dialog.close();
 });

@@ -5,30 +5,41 @@ class Beer:
     """
     Represents a single beer.
     """
-    def __init__(self, soup: BeautifulSoup) -> None:
-        #grab id from href tag
-        id_tag = soup.find('a', class_='label')
-        self.id = int(id_tag['href'].split("/")[-1])
+    def __init__(self, soup: BeautifulSoup | None = None, session: dict | None = None) -> None:
+        if session is None:
+            #grab id from href tag
+            id_tag = soup.find('a', class_='label')
+            self.id = int(id_tag['href'].split("/")[-1])
 
-        #grab name/url
-        name = soup.find('p', class_='name')
-        self.name = name.text
-        self.url = f"https://untappd.com{name.a['href']}"
+            #grab name/url
+            name = soup.find('p', class_='name')
+            self.name = name.text
+            self.url = f"https://untappd.com{name.a['href']}"
 
-        #grab img url
-        self.img_url = soup.find('img')['src']      
+            #grab img url
+            self.img_url = soup.find('img')['src']      
 
-        #grab brewery
-        brewery_href = soup.find('p', class_='brewery').a['href']
-        brewery_url = f"https://untappd.com{brewery_href}"
-        brewery_soup = Brewery.find_brewery(brewery_url)
-        self.brewery = Brewery(brewery_soup)
+            #grab brewery
+            brewery_href = soup.find('p', class_='brewery').a['href']
+            brewery_url = f"https://untappd.com{brewery_href}"
+            brewery_soup = Brewery.find_brewery(brewery_url)
+            self.brewery = Brewery(brewery_soup)
 
-        #grab other details
-        self.style = soup.find('p', class_='style').text
-        self.abv = float(soup.find('p', class_='abv').text.strip().split("%")[0])
-        self.ibu = int(soup.find('p', class_='ibu').text.strip().split()[0])
-        self.rating = float(soup.find('div', class_='caps')['data-rating'])
+            #grab other details
+            self.style = soup.find('p', class_='style').text
+            self.abv = float(soup.find('p', class_='abv').text.strip().split("%")[0])
+            self.ibu = int(soup.find('p', class_='ibu').text.strip().split()[0])
+            self.rating = float(soup.find('div', class_='caps')['data-rating'])
+        else:
+            self.id = session['id']
+            self.name = session['name']
+            self.url = session['url']
+            self.img_url = session['img_url']
+            self.brewery = Brewery(session = session['brewery'])
+            self.style = session['style']
+            self.abv = session['abv']
+            self.ibu = session['ibu']
+            self.rating = session['rating']
 
     """
     Finds beer given search term by first opening the right serach page, then picking the first
@@ -50,24 +61,45 @@ class Beer:
         soup = BeautifulSoup(response.text, 'html.parser')
         #grab just the HTML of the first result
         return soup.find('div', class_='results-container').find('div', class_='beer-item')
+    
+    def serialize(self) -> dict:
+        return {
+            'id': self.id
+            ,'name': self.name
+            ,'url': self.url
+            ,'img_url': self.img_url
+            ,'brewery': self.brewery.serialize()
+            ,'style': self.style
+            ,'abv': self.abv
+            ,'ibu': self.ibu
+            ,'rating': self.rating
+        }
 
 class Brewery:
     """
     Represents a brewery
     """
-    def __init__(self, soup: BeautifulSoup) -> None:
-        self.name = soup.find('div', class_='name').h1.text.strip()
+    def __init__(self, soup: BeautifulSoup | None = None, session: dict | None = None) -> None:
+        if session is None:
+            self.name = soup.find('div', class_='name').h1.text.strip()
 
-        loc = soup.find('p', class_='brewery').text.strip().split(",")
-        self.city = loc[0]
-        self.state = loc[1].split()[0]
+            loc = soup.find('p', class_='brewery').text.strip().split(",")
+            self.city = loc[0]
+            self.state = loc[1].split()[0]
 
-        self.style = soup.find('p', class_='style').text
+            self.style = soup.find('p', class_='style').text
 
-        ratings_str = soup.find('p', class_='raters').text.strip().split()[0]
-        self.ratings = int(ratings_str.replace(",",""))
+            ratings_str = soup.find('p', class_='raters').text.strip().split()[0]
+            self.ratings = int(ratings_str.replace(",",""))
 
-        self.site = soup.find('a', class_='url tip')['href']
+            self.site = soup.find('a', class_='url tip')['href']
+        else:
+            self.name = session['name']
+            self.city = session['city']
+            self.state = session['state']
+            self.style = session['style']
+            self.ratings = session['ratings']
+            self.site = session['site']
 
 
     @classmethod
@@ -78,3 +110,13 @@ class Brewery:
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
         return soup.find('div', class_='content')
+    
+    def serialize(self) -> dict:
+        return {
+            'name': self.name
+            ,'city': self.city
+            ,'state': self.state
+            ,'style': self.style
+            ,'ratings': self.ratings
+            ,'site': self.site
+        }
