@@ -16,15 +16,19 @@ class Grid:
         self.grid = [[None for _ in range(self.size)] for _ in range(self.size)]
         self.cols = []
         exclude = set()
+        dups = set()
         for i in range(self.size):
-            req = Requirement()
+            req = Requirement(dups=dups)
             self.cols.append(req)
-            exclude = exclude + req.get_excluded_set()
+            exclude = exclude.union(req.get_excluded_set())
+            dups.add((req.type, req.req))
         self.rows = []
+        dups = set()
         for i in range(self.size):
             #need each row to consider what columns it's intersecting with
-            req = Requirement(exclude)
+            req = Requirement(exclude=exclude, dups=dups)
             self.rows.append(req)
+            dups.add((req.type, req.req))
     
     """
     Given an assumed empty coordinate on the grid and a beer, return whether that beer can fit into that square

@@ -16,18 +16,53 @@ class Requirement:
         ,'region': ['midwest', 'east_coast', 'west_coast']
     }
 
-    def __init__(self, exclude = None) -> None:
+    texts = {
+        ('abv', 'high'): 'ABV ≥ 6.0%'
+        ,('abv', 'low'): 'ABV ≤ 6.0%'
+        ,('ibu', 'high'): 'IBU ≥ 30'
+        ,('ibu', 'low'): 'IBU ≤ 30'
+        ,('brewery', 'macro'): 'Macrobrewery'
+        ,('brewery', 'micro'): 'Microbrewery'
+        ,('rating', 'high'): 'Rating ≥ 3.5'
+        ,('rating', 'low'): 'Rating ≤ 3.5'
+        ,('style', 'pale_ale'): 'Pale Ale'
+        ,('style', 'ipa'): 'IPA'
+        ,('style', 'stout'): 'Stout'
+        ,('style', 'lager'): 'Lager'
+        ,('style', 'sour'): 'Sour'
+        ,('style', 'wheat'): 'Wheat Ale'
+        ,('style', 'blonde'): 'Blonde Ale'
+        ,('dom_intl', 'domestic'): 'Domestic'
+        ,('dom_intl', 'international'): 'International'
+        ,('region', 'midwest'): 'Midwest'
+        ,('region', 'east_coast'): 'East Coast'
+        ,('region', 'west_coast'): 'West Coast'
+    }
+
+    def __init__(self, exclude = None, dups = None) -> None:
         if exclude is None:
             exclude = set()
+        if dups is None:
+            dups = set()
         available = set(self.types.keys()) - exclude
         self.type = random.choice(list(available))
         self.req = random.choice(self.types[self.type])
+        while (self.type, self.req) in dups:
+            self.type = random.choice(list(available))
+            self.req = random.choice(self.types[self.type])
+        self.text = self.texts[(self.type, self.req)]
 
     def get_excluded_set(self):
         if self.type in ['dom_intl', 'region']:
             return {'dom_intl', 'region'}
         else:
             return {self.type}
+        
+    def __repr__(self) -> str:
+        return self.text
+    
+    def __str__(self) -> str:
+        return self.text
 
     """
     Given beer object, determine if it matches this requirement of the grid

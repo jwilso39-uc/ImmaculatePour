@@ -5,53 +5,70 @@
         <thead>
             <th scope="col"></th>
             <th scope="col">
-                <button>Guess Beer</button>
+                {{ cols[0] }}
             </th>
             <th scope="col">
-                <button>Guess Beer</button>
+                {{ cols[1] }}
             </th>
             <th scope="col">
-                <button>Guess Beer</button>
+                {{ cols[2] }}
             </th>
         </thead>
         <tbody>
             <tr>
-                <th scope="row">Row 1</th>
+                <th scope="row">{{ rows[0] }}</th>
                 <td>
-                    <button>Guess Beer</button>
+                    <button class="show-dialog" data-row="0" data-col="0">Guess Beer</button>
                 </td>
                 <td>
-                    <button>Guess Beer</button>
+                    <button class="show-dialog" data-row="0" data-col="1">Guess Beer</button>
                 </td>
                 <td>
-                    <button>Guess Beer</button>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">Row 2</th>
-                <td>
-                    <button>Guess Beer</button>
-                </td>
-                <td>
-                    <button>Guess Beer</button>
-                </td>
-                <td>
-                    <button>Guess Beer</button>
+                    <button class="show-dialog" data-row="0" data-col="2">Guess Beer</button>
                 </td>
             </tr>
             <tr>
-                <th scope="row">Row 3</th>
+                <th scope="row">{{ rows[1] }}</th>
                 <td>
-                    <button>Guess Beer</button>
+                    <button class="show-dialog" data-row="1" data-col="0">Guess Beer</button>
                 </td>
                 <td>
-                    <button>Guess Beer</button>
+                    <button class="show-dialog" data-row="1" data-col="1">Guess Beer</button>
                 </td>
                 <td>
-                    <button>Guess Beer</button>
+                    <button class="show-dialog" data-row="1" data-col="2">Guess Beer</button>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">{{ rows[2] }}</th>
+                <td>
+                    <button class="show-dialog" data-row="2" data-col="0">Guess Beer</button>
+                </td>
+                <td>
+                    <button class="show-dialog" data-row="2" data-col="1">Guess Beer</button>
+                </td>
+                <td>
+                    <button class="show-dialog" data-row="2" data-col="2">Guess Beer</button>
                 </td>
             </tr>
         </tbody>
     </table>
+
+<dialog id="dialog">
+  <form method="dialog">
+    <p>
+      <label>
+        Enter Beer:
+        <input type="text" required />
+      </label>
+    </p>
+    <div>
+      <input type="submit" id="js-close" value="Submit" />
+    </div>
+  </form>
+</dialog>
+<output></output>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
