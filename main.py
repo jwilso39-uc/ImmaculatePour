@@ -30,11 +30,8 @@ def main():
 
             is_correct = False
             if grid.check_square(col_idx, row_idx, beer):
-                print(f"Guess for {grid.rows[row_idx]} x {grid.cols[col_idx]}: {beer} is CORRECT!")
                 grid.grid[row_idx][col_idx] = beer
                 is_correct = True
-            else:
-                print(f"Guess for {grid.rows[row_idx]} x {grid.cols[col_idx]}: {beer} is INCORRECT!")
 
             return jsonify({
                 "is_correct": is_correct,
