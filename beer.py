@@ -74,6 +74,9 @@ class Beer:
             ,'ibu': self.ibu
             ,'rating': self.rating
         }
+    
+    def __repr__(self) -> str:
+        return f"{self.id}: {self.name}"
 
 class Brewery:
     """

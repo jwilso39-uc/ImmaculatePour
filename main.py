@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, session
+from flask import Flask, request, render_template, session, jsonify
 from grid import Grid
 from beer import Beer
 
@@ -18,14 +18,30 @@ def main():
         grid = Grid(session = session['grid'])
     #check answer and potentially update grid
     if request.method == "POST":
+        data = request.get_json()
 
-        beer = request.form.get('beer_name')
-        row_idx = int(request.form.get('row'))
-        col_idx = int(request.form.get('col'))
+        beer_str = data.get('beer_name')
+        if beer_str is not None:
+            beer = Beer(soup = Beer.find_beer(beer_str))
 
-        print(f"Guess for {grid.rows[row_idx]} x {grid.cols[col_idx]}: {beer}")
+        if beer is not None:
+            row_idx = int(data.get('row'))
+            col_idx = int(data.get('col'))
 
-        return render_template('grid.html', cols=grid.cols, rows=grid.rows)
+            is_correct = False
+            if grid.check_square(col_idx, row_idx, beer):
+                print(f"Guess for {grid.rows[row_idx]} x {grid.cols[col_idx]}: {beer} is CORRECT!")
+                grid.grid[row_idx][col_idx] = beer
+                is_correct = True
+            else:
+                print(f"Guess for {grid.rows[row_idx]} x {grid.cols[col_idx]}: {beer} is INCORRECT!")
+
+            return jsonify({
+                "is_correct": is_correct,
+                "row": row_idx,
+                "col": col_idx,
+                "beer": beer.serialize()
+            })
 
     return render_template('grid.html', cols = grid.cols, rows = grid.rows)
 
